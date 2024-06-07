@@ -5,6 +5,7 @@ import UserPage from "./pages/UserPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ChangeTariffPage from "./pages/ChangeTariffPage";
+import AddCounterNumbersPage from "./pages/AddCounterNumbersPage";
 
 export const router = createBrowserRouter([
   {
@@ -26,7 +27,7 @@ export const router = createBrowserRouter([
           },
         ],
       },
-      { path: "/recieve-numbers", element: <UserPage /> },
+      { path: "/recieve-numbers", element: <AddCounterNumbersPage /> },
     ],
   },
 ]);
