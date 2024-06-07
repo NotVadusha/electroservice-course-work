@@ -39,7 +39,11 @@ const UserPage: React.FC = () => {
       <Navbar />
       <Container>
         <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
-          <Avatar sx={{ bgcolor: "blue", margin: "4rem 0" }}>U</Avatar>
+          <Avatar
+            sx={{ bgcolor: "blue", margin: "4rem 0", width: 128, height: 128 }}
+          >
+            U
+          </Avatar>
         </Box>
         <form onSubmit={handleSubmit}>
           <Box

@@ -20,7 +20,7 @@ const HomePage: React.FC = () => {
             Переходь на тариф день-ніч
           </Typography>
           <Box sx={{ marginTop: 2, "& > *": { marginRight: 2 } }}>
-            <Button variant="outlined" color="secondary">
+            <Button variant="outlined" color="secondary" href="/change-tariff">
               Змінити тариф
             </Button>
           </Box>

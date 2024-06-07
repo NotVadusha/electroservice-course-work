@@ -1,13 +1,23 @@
-import { AppBar, Link, Toolbar, Typography, Box, Avatar } from "@mui/material";
+import {
+  AppBar,
+  Link,
+  Toolbar,
+  Typography,
+  Box,
+  Avatar,
+  Button,
+} from "@mui/material";
 
 const Navbar = () => {
   return (
     <AppBar position="static">
       <Toolbar>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box>
-            <Typography variant="h6">Одеські електромережі</Typography>
-          </Box>
+          <Button href="/" variant="text">
+            <Typography variant="h6" color="white">
+              Одеські електромережі
+            </Typography>
+          </Button>
         </Box>
         <Box
           sx={{
