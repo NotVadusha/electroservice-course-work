@@ -15,15 +15,41 @@ import {
 } from "@mui/material";
 import Navbar from "../components/Navbar";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import localhostInstance from "../httpService";
 
-const cities = ["Одеса", "Київ", "Львів"];
-const streets = ["Велика Арнаутська", "Мала Арнаутська", "Дерибасівська"];
-const houses = ["1", "2", "3"];
+const hours = Array.from({ length: 24 }, (_, i) => `${i}:00 - ${i + 1}:00`);
+const days = [
+  "Понеділок",
+  "Вівторок",
+  "Середа",
+  "Четвер",
+  "П'ятниця",
+  "Субота",
+  "Неділя",
+];
 
 const EmergenciesPage = () => {
   const [selectedCity, _setSelectedCity] = useState<string | null>(null);
   const [selectedStreet, _setSelectedStreet] = useState<string | null>(null);
   const [selectedHouse, _setSelectedHouse] = useState<string | null>(null);
+
+  const { data: emergenciesData, isLoading: emergenciesLoading } = useQuery({
+    queryKey: ["emergencies", selectedCity, selectedStreet, selectedHouse],
+    queryFn: () =>
+      localhostInstance.get("/emergencies/emergencies-by-address", {
+        params: {
+          city: selectedCity,
+          street: selectedStreet,
+          number: selectedHouse,
+        },
+      }),
+  });
+
+  const { data: addresses, isLoading } = useQuery({
+    queryKey: ["addresses"],
+    queryFn: () => localhostInstance.get("/clients/addresses"),
+  });
 
   const setSelectedCity = (value: string) => {
     _setSelectedCity(value);
@@ -40,78 +66,74 @@ const EmergenciesPage = () => {
     _setSelectedHouse(value);
   };
 
-  const hours = Array.from({ length: 24 }, (_, i) => `${i}:00 - ${i + 1}:00`);
-  const days = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
-  const getRandomElectricityStatus = () => Math.random() > 0.5;
-
   return (
     <div>
       <Navbar />
       <Container>
         <Box p={4}>
-          <Box display="flex" gap={8}>
-            <FormControl fullWidth>
-              <InputLabel id="city-input-label">Місто</InputLabel>
-              <Select
-                labelId="city-input-label"
-                id="city-input"
-                value={selectedCity}
-                label="Місто"
-                onChange={(value) =>
-                  setSelectedCity(value.target.value as string)
-                }
-              >
-                {cities.map((city) => (
-                  <MenuItem value={city}>{city}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="street-input-label">Вулиця</InputLabel>
-              <Select
-                disabled={!selectedCity}
-                labelId="street-input-label"
-                id="street-input"
-                value={selectedStreet}
-                label="Вулиця"
-                onChange={(value) =>
-                  setSelectedStreet(value.target.value as string)
-                }
-              >
-                {streets.map((street) => (
-                  <MenuItem value={street}>{street}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">
-                Номер будинку
-              </InputLabel>
-              <Select
-                disabled={!selectedStreet}
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={selectedHouse}
-                label="Номер будинку"
-                autoWidth
-                onChange={(value) =>
-                  setSelectedHouse(value.target.value as string)
-                }
-              >
-                {houses.map((house) => (
-                  <MenuItem value={house}>{house}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+          {!isLoading && addresses?.data && (
+            <Box display="flex" gap={8}>
+              <FormControl fullWidth>
+                <InputLabel id="city-input-label">Місто</InputLabel>
+                <Select
+                  labelId="city-input-label"
+                  id="city-input"
+                  value={selectedCity}
+                  label="Місто"
+                  onChange={(value) =>
+                    setSelectedCity(value.target.value as string)
+                  }
+                >
+                  {Object.keys(addresses.data).map((city) => (
+                    <MenuItem value={city}>{city}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="street-input-label">Вулиця</InputLabel>
+                <Select
+                  disabled={!selectedCity}
+                  labelId="street-input-label"
+                  id="street-input"
+                  value={selectedStreet}
+                  label="Вулиця"
+                  onChange={(value) =>
+                    setSelectedStreet(value.target.value as string)
+                  }
+                >
+                  {(selectedCity
+                    ? Object.keys(addresses.data[selectedCity])
+                    : []
+                  ).map((street) => (
+                    <MenuItem value={street}>{street}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Номер будинку
+                </InputLabel>
+                <Select
+                  disabled={!selectedStreet}
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={selectedHouse}
+                  label="Номер будинку"
+                  autoWidth
+                  onChange={(value) =>
+                    setSelectedHouse(value.target.value as string)
+                  }
+                >
+                  {(selectedCity && selectedStreet
+                    ? addresses.data[selectedCity][selectedStreet]
+                    : []
+                  ).map((house) => (
+                    <MenuItem value={house}>{house}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
         </Box>
         <TableContainer component={Paper}>
           <Table>
@@ -124,22 +146,49 @@ const EmergenciesPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {hours.map((hour, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  <TableCell>{hour}</TableCell>
-                  {days.map((_, colIndex) => (
-                    <TableCell
-                      key={colIndex}
-                      sx={{
-                        bgcolor: getRandomElectricityStatus() ? "green" : "red",
-                        color: "white",
-                      }}
-                    >
-                      {getRandomElectricityStatus() ? "Yes" : "No"}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
+              {!emergenciesLoading &&
+                emergenciesData &&
+                hours.map((hour, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    <TableCell>{hour}</TableCell>
+                    {days.map((_, colIndex) => {
+                      const dayDate = new Date();
+                      dayDate.setDate(dayDate.getDate() + colIndex);
+                      dayDate.setHours(rowIndex);
+                      console.log(dayDate);
+                      const emergency = emergenciesData.data.find(
+                        (emergency) =>
+                          new Date(emergency.created_at) <= dayDate &&
+                          new Date(emergency.expected_fix_date) >= dayDate,
+                      );
+                      if (emergency) {
+                        return (
+                          <TableCell
+                            key={colIndex}
+                            sx={{
+                              bgcolor: "red",
+                              color: "white",
+                            }}
+                          >
+                            {"Not"}
+                          </TableCell>
+                        );
+                      } else {
+                        return (
+                          <TableCell
+                            key={colIndex}
+                            sx={{
+                              bgcolor: "green",
+                              color: "white",
+                            }}
+                          >
+                            {"Yes"}
+                          </TableCell>
+                        );
+                      }
+                    })}
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>

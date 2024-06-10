@@ -1,6 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { EmergenciesService } from './emergencies.service';
-import { CreateEmergencyDto } from './dto/create-emergency.dto';
 import { UpdateEmergencyDto } from './dto/update-emergency.dto';
 
 @Controller('emergencies')
@@ -8,8 +16,21 @@ export class EmergenciesController {
   constructor(private readonly emergenciesService: EmergenciesService) {}
 
   @Post()
-  create(@Body() createEmergencyDto: CreateEmergencyDto) {
-    return this.emergenciesService.create(createEmergencyDto);
+  create() {
+    return this.emergenciesService.create();
+  }
+
+  @Get('/emergencies-by-address')
+  getEmergenciesByAddress(
+    @Query('city') city: string,
+    @Query('street') street: string,
+    @Query('number') number: number,
+  ) {
+    return this.emergenciesService.getEmergenciesByAddress(
+      city,
+      street,
+      number,
+    );
   }
 
   @Get()
@@ -23,7 +44,10 @@ export class EmergenciesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEmergencyDto: UpdateEmergencyDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateEmergencyDto: UpdateEmergencyDto,
+  ) {
     return this.emergenciesService.update(+id, updateEmergencyDto);
   }
 

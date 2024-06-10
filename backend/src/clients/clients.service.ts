@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
@@ -8,8 +7,29 @@ import { DataSource } from 'typeorm';
 export class ClientsService {
   constructor(@InjectDataSource() private readonly connection: DataSource) {}
 
-  create(createClientDto: CreateClientDto) {
+  create() {
     return 'This action adds a new client';
+  }
+
+  async getAllAddresses(): Promise<any> {
+    const addresses = await this.connection.query(`
+      SELECT city, street, number
+      FROM addresses
+    `);
+
+    const result = {};
+
+    addresses.forEach((address) => {
+      if (!result[address.city]) {
+        result[address.city] = {};
+      }
+      if (!result[address.city][address.street]) {
+        result[address.city][address.street] = [];
+      }
+      result[address.city][address.street].push(address.number);
+    });
+
+    return result;
   }
 
   async findAll() {

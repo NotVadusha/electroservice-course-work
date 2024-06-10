@@ -4,11 +4,14 @@ import {
   Column,
   ManyToMany,
   JoinTable,
+  JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Emergencies } from 'src/emergencies/entities/emergency.entity';
 import { Contracts } from 'src/contracts/entities/contract.entity';
 import { Payments } from 'src/payments/entities/payment.entity';
 import { CounterIndicators } from './counter_indicator.entity';
+import { Addresses } from './addresses.entity';
 
 @Entity('clients')
 export class Clients {
@@ -24,8 +27,9 @@ export class Clients {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  address: string;
+  @OneToOne(() => Addresses, (address) => address.client)
+  @JoinColumn()
+  address: Addresses;
 
   @Column()
   phone_integer: string;

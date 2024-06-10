@@ -9,6 +9,12 @@ export class Emergencies {
   @Column()
   created_at: Date;
 
+  @Column({ nullable: true })
+  updated_at: Date;
+
+  @Column({ nullable: true })
+  expected_fix_date: Date;
+
   @Column()
   description: string;
 
