@@ -6,13 +6,27 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ChangeTariffPage from "./pages/ChangeTariffPage";
 import AddCounterNumbersPage from "./pages/AddCounterNumbersPage";
+import AdminPanel from "./pages/AdminPanelPage";
+import AdminDashboardsPage from "./pages/AdminDashboardsPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     children: [
       { index: true, element: <HomePage /> },
-      { path: "/emergencies", element: <EmergenciesPage /> },
+      {
+        path: "/emergencies",
+        children: [
+          {
+            index: true,
+            element: <EmergenciesPage />,
+          },
+          {
+            path: "create",
+            element: <div>create emergency</div>,
+          },
+        ],
+      },
       { path: "/user", element: <UserPage /> },
       { path: "/login", element: <LoginPage /> },
       { path: "/register", element: <RegisterPage /> },
@@ -20,14 +34,14 @@ export const router = createBrowserRouter([
       {
         path: "/admin",
         children: [
-          { index: true, element: <div>adminpanel</div> },
+          { index: true, element: <AdminPanel /> },
           {
             path: "/admin/dashboard",
-            element: <div>Dashboard</div>,
+            element: <AdminDashboardsPage />,
           },
         ],
       },
-      { path: "/recieve-numbers", element: <AddCounterNumbersPage /> },
+      { path: "/receive-numbers", element: <AddCounterNumbersPage /> },
     ],
   },
 ]);

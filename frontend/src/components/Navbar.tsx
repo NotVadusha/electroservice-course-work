@@ -30,10 +30,7 @@ const Navbar = () => {
           <Link href="/QnA" color={"#FFF"} variant="body2">
             Під'єднатись
           </Link>
-          <Link href="/login" color={"#FFF"} variant="body2">
-            Повідомити про помилку
-          </Link>
-          <Link href="/login" color={"#FFF"} variant="body2">
+          <Link href="/emergencies/create" color={"#FFF"} variant="body2">
             Повідомити про помилку
           </Link>
         </Box>

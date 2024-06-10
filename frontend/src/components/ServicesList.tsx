@@ -1,22 +1,7 @@
 import { Box, Link, Typography } from "@mui/material";
-// import { FC, ReactNode } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import DvrIcon from "@mui/icons-material/Dvr";
-
-// interface ServiceCardProps {
-//   text: string;
-//   icon: ReactNode;
-// }
-
-// const ServiceCard: FC<ServiceCardProps> = ({ icon, text }) => {
-//   return (
-//     <Box display={"flex"} width={"fit-content"} bgcolor={"violet"}>
-//       <Box p={4}>{icon}</Box>
-//       <Box p={4}>{text}</Box>
-//     </Box>
-//   );
-// };
 
 const ServicesList = () => {
   return (
@@ -36,8 +21,8 @@ const ServicesList = () => {
             <Typography>Повідомити про відсутність світла</Typography>
           </Box>
         </Box>
-      </Link>{" "}
-      <Link href="#">
+      </Link>
+      <Link href="/receive-numbers">
         <Box
           display={"flex"}
           width={"fit-content"}
@@ -53,7 +38,7 @@ const ServicesList = () => {
           </Box>
         </Box>
       </Link>
-      <Link href="#">
+      <Link href="/support">
         <Box
           display={"flex"}
           width={"fit-content"}
