@@ -8,11 +8,14 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const UserPage: React.FC = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+
+  const navigate = useNavigate();
 
   const handleFirstNameChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -83,6 +86,17 @@ const UserPage: React.FC = () => {
               />
             </Box>
             <Button type="submit">Save</Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => {
+                localStorage.removeItem("userMail");
+                localStorage.removeItem("password");
+                navigate("/login");
+              }}
+            >
+              Log out
+            </Button>
           </Box>
         </form>
       </Container>

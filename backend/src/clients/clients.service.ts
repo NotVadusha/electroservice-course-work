@@ -11,6 +11,17 @@ export class ClientsService {
     return 'This action adds a new client';
   }
 
+  async login(userMail: string, password: string) {
+    const user = await this.connection.query(
+      `
+      SELECT * FROM clients
+      WHERE email = $1 AND password = $2
+      `,
+      [userMail, password],
+    );
+    return user[0];
+  }
+
   async getAllAddresses(): Promise<any> {
     const addresses = await this.connection.query(`
       SELECT city, street, number

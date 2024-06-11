@@ -127,7 +127,7 @@ const EmergenciesPage = () => {
                   {(selectedCity && selectedStreet
                     ? addresses.data[selectedCity][selectedStreet]
                     : []
-                  ).map((house) => (
+                  ).map((house: number) => (
                     <MenuItem value={house}>{house}</MenuItem>
                   ))}
                 </Select>
@@ -157,7 +157,10 @@ const EmergenciesPage = () => {
                       dayDate.setHours(rowIndex);
                       console.log(dayDate);
                       const emergency = emergenciesData.data.find(
-                        (emergency) =>
+                        (emergency: {
+                          created_at: Date;
+                          expected_fix_date: Date;
+                        }) =>
                           new Date(emergency.created_at) <= dayDate &&
                           new Date(emergency.expected_fix_date) >= dayDate,
                       );

@@ -77,7 +77,10 @@ const RegisterPage = () => {
             </Box>
           </form>
           <Typography>
-            Вже маєш акаунт? <Button variant="text">Увійти</Button>
+            Вже маєш акаунт?{" "}
+            <Button variant="text" href="/login">
+              Увійти
+            </Button>
           </Typography>
         </Box>
       </Container>

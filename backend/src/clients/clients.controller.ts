@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { UpdateClientDto } from './dto/update-client.dto';
@@ -22,6 +23,14 @@ export class ClientsController {
   @Get('/addresses')
   getAddresses() {
     return this.clientsService.getAllAddresses();
+  }
+
+  @Get('/login')
+  login(
+    @Query('userMail') userMail: string,
+    @Query('password') password: string,
+  ) {
+    return this.clientsService.login(userMail, password);
   }
 
   @Get()

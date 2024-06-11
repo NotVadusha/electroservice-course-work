@@ -27,6 +27,9 @@ export class Clients {
   @Column({ unique: true })
   email: string;
 
+  @Column()
+  password: string;
+
   @OneToOne(() => Addresses, (address) => address.client)
   @JoinColumn()
   address: Addresses;
