@@ -8,6 +8,7 @@ import ChangeTariffPage from "./pages/ChangeTariffPage";
 import AddCounterNumbersPage from "./pages/AddCounterNumbersPage";
 import AdminPanel from "./pages/AdminPanelPage";
 import AdminDashboardsPage from "./pages/AdminDashboardsPage";
+import ConfirmIndicatorsPage from "./pages/ConfirmIndicatorsPage";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute = () => {
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
           {
             path: "/admin/dashboard",
             element: <AdminDashboardsPage />,
+          },
+          {
+            path: "/admin/confirm",
+            element: <ConfirmIndicatorsPage />,
           },
         ],
       },

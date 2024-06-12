@@ -35,6 +35,7 @@ const LoginPage = () => {
   if (!isLoading && loginData?.data) {
     localStorage.setItem("userMail", loginData.data.email);
     localStorage.setItem("password", loginData.data.password);
+    localStorage.setItem("clientId", loginData.data.id);
   }
 
   if (localStorage.getItem("userMail") && localStorage.getItem("password")) {

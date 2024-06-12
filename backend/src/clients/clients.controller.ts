@@ -1,23 +1,25 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { ClientsService } from './clients.service';
-import { UpdateClientDto } from './dto/update-client.dto';
+
+export interface CounterIndicator {
+  month: string;
+  usage: number;
+  status: string;
+  clientId: string;
+}
 
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
-  @Post()
-  create() {
-    return this.clientsService.create();
+  @Post('save-counter-indicators')
+  saveCounterIndicators(@Body() indicators: Record<string, CounterIndicator>) {
+    return this.clientsService.saveCounterIndicators(indicators);
+  }
+
+  @Get('confirm-counter-indicators/:id')
+  confirmCounterIndicators(@Param('id') id: string) {
+    return this.clientsService.confirmCounterIndicators(id);
   }
 
   @Get('/addresses')
@@ -33,23 +35,13 @@ export class ClientsController {
     return this.clientsService.login(userMail, password);
   }
 
+  @Get('counter-indicators')
+  getIndicators() {
+    return this.clientsService.getIndicators();
+  }
+
   @Get()
   findAll() {
     return this.clientsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clientsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
-    return this.clientsService.update(+id, updateClientDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientsService.remove(+id);
   }
 }

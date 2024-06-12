@@ -10,7 +10,13 @@ export class CounterIndicators {
   usage: number;
 
   @Column()
-  caputred_at: Date;
+  month: string;
+
+  @Column()
+  status: string;
+
+  @Column()
+  captured_at: Date;
 
   @ManyToMany(() => Clients, (client) => client.counterIndicators)
   clients: Clients[];
