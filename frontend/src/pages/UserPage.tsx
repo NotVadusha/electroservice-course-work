@@ -92,6 +92,7 @@ const UserPage: React.FC = () => {
               onClick={() => {
                 localStorage.removeItem("userMail");
                 localStorage.removeItem("password");
+                localStorage.removeItem("clientId");
                 navigate("/login");
               }}
             >

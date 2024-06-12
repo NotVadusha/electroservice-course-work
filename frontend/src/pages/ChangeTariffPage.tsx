@@ -1,56 +1,32 @@
 import { Box, Container, Typography } from "@mui/material";
 import Navbar from "../components/Navbar";
 import TariffCard from "../components/TariffCard";
-const Tarriffs = [
-  {
-    text: "Тариф 1",
-    description: "Опис тарифу 1",
-  },
-  {
-    text: "Тариф 2",
-    description: "Опис тарифу 2",
-  },
-  {
-    text: "Тариф 3",
-    description: "Опис тарифу 3",
-  },
-  {
-    text: "Тариф 4",
-    description: "Опис тарифу 4",
-  },
-  {
-    text: "Тариф 5",
-    description: "Опис тарифу 5",
-  },
-  {
-    text: "Тариф 6",
-    description: "Опис тарифу 6",
-  },
-  {
-    text: "Тариф 7",
-    description: "Опис тарифу 7",
-  },
-  {
-    text: "Тариф 8",
-    description: "Опис тарифу 8",
-  },
-  {
-    text: "Тариф 9",
-    description: "Опис тарифу 9",
-  },
-  {
-    text: "Тариф 10",
-    description: "Опис тарифу 10",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import localhostInstance from "../httpService";
+
+interface Tariff {
+  name: string;
+  description: string;
+  current: boolean;
+}
 
 const ChangeTariffPage = () => {
+  const { data } = useQuery({
+    queryKey: ["tariffs"],
+    queryFn: async () =>
+      (
+        await localhostInstance.get<Tariff[]>(
+          `/contracts/get-tariffs/${localStorage.getItem("clientId")}`,
+        )
+      ).data,
+  });
+
   return (
     <div>
       <Navbar />
       <Container>
         <Typography variant={"h4"} textAlign={"center"} p={4}>
-          Оберіть тариф, що цікавить вас!{" "}
+          Оберіть тариф, що цікавить вас!
         </Typography>
         <Box
           display={"flex"}
@@ -62,14 +38,12 @@ const ChangeTariffPage = () => {
           justifyItems={"center"}
           justifyContent={"space-evenly"}
         >
-          {/*Current tariff*/}
-          <TariffCard
-            text={Tarriffs[0].text}
-            description={Tarriffs[0].description}
-          />
-
-          {Tarriffs.map((tarriff) => (
-            <TariffCard text={tarriff.text} description={tarriff.description} />
+          {data?.map((tarriff) => (
+            <TariffCard
+              text={tarriff.name}
+              description={tarriff.description}
+              current={tarriff.current}
+            />
           ))}
         </Box>
       </Container>

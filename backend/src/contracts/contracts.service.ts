@@ -1,26 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CreateContractDto } from './dto/create-contract.dto';
-import { UpdateContractDto } from './dto/update-contract.dto';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class ContractsService {
-  create(createContractDto: CreateContractDto) {
-    return 'This action adds a new contract';
-  }
+  constructor(@InjectDataSource() private readonly connection: DataSource) {}
 
-  findAll() {
-    return `This action returns all contracts`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} contract`;
-  }
-
-  update(id: number, updateContractDto: UpdateContractDto) {
-    return `This action updates a #${id} contract`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} contract`;
+  async getTariffs(userId: string) {
+    return await this.connection.query(
+      `
+      SELECT * FROM tariffs
+      `,
+      [],
+    );
   }
 }
