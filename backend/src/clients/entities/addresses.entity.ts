@@ -21,7 +21,10 @@ export class Addresses {
   @Column()
   number: number;
 
-  @OneToOne(() => Clients, (client) => client.address)
+  @OneToOne(() => Clients, (client) => client.address, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   client: Clients;
 }

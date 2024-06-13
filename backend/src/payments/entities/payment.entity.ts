@@ -26,6 +26,9 @@ export class Payments {
   @ManyToOne(() => PaymentTypes, (paymentType) => paymentType.payments)
   paymentType: PaymentTypes;
 
-  @ManyToMany(() => Clients, (client) => client.payments)
+  @ManyToMany(() => Clients, (client) => client.payments, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   clients: Clients[];
 }

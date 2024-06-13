@@ -45,7 +45,9 @@ export class Clients {
   })
   contracts: Contracts[];
 
-  @ManyToMany(() => Emergencies, (emergency) => emergency.clients)
+  @ManyToMany(() => Emergencies, (emergency) => emergency.clients, {
+    cascade: true,
+  })
   @JoinTable({
     name: 'emergencies_clients',
     joinColumn: { name: 'client_id', referencedColumnName: 'id' },

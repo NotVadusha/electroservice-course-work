@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   ManyToMany,
+  JoinColumn,
 } from 'typeorm';
 import { Clients } from 'src/clients/entities/client.entity';
 import { Tariffs } from './tariff.entity';
@@ -22,9 +23,15 @@ export class Contracts {
   @Column()
   created_at: Date;
 
-  @ManyToOne(() => Tariffs, (tariff) => tariff.contracts)
+  @ManyToOne(() => Tariffs, (tariff) => tariff.contracts, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: 'tariff_id' })
   tariff: Tariffs;
 
-  @ManyToMany(() => Clients, (client) => client.contracts)
+  @ManyToMany(() => Clients, (client) => client.contracts, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   clients: Clients[];
 }

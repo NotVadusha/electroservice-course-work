@@ -12,6 +12,9 @@ export class PaymentTypes {
   @Column()
   description: string;
 
-  @OneToMany(() => Payments, (payment) => payment.paymentType)
+  @OneToMany(() => Payments, (payment) => payment.paymentType, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   payments: Payments[];
 }

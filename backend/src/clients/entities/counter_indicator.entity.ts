@@ -18,6 +18,9 @@ export class CounterIndicators {
   @Column()
   captured_at: Date;
 
-  @ManyToMany(() => Clients, (client) => client.counterIndicators)
+  @ManyToMany(() => Clients, (client) => client.counterIndicators, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   clients: Clients[];
 }

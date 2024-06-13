@@ -15,6 +15,9 @@ export class Tariffs {
   @Column()
   description: string;
 
-  @OneToMany(() => Contracts, (contract) => contract.tariff)
+  @OneToMany(() => Contracts, (contract) => contract.tariff, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   contracts: Contracts[];
 }

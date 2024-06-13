@@ -5,12 +5,14 @@ interface TariffCardProps {
   text: string;
   description: string;
   current?: boolean;
+  handleUpdate?: () => void;
 }
 
 const TariffCard: FC<TariffCardProps> = ({
   description,
   text,
   current = false,
+  handleUpdate = () => {},
 }) => {
   return (
     <Box
@@ -26,7 +28,7 @@ const TariffCard: FC<TariffCardProps> = ({
       <Typography textAlign={"center"} p={4}>
         {description}
       </Typography>
-      <Button variant={"contained"} disabled={!current}>
+      <Button variant={"contained"} disabled={current} onClick={handleUpdate}>
         {current ? "Обрати" : "Поточний тариф"}
       </Button>
     </Box>
