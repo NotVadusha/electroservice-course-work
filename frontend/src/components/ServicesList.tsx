@@ -18,7 +18,7 @@ const ServicesList = () => {
             <LightbulbIcon />
           </Box>
           <Box p={4}>
-            <Typography>Повідомити про відсутність світла</Typography>
+            <Typography>Переглянути графіки вимкнень</Typography>
           </Box>
         </Box>
       </Link>

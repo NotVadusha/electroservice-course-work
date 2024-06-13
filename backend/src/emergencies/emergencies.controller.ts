@@ -1,23 +1,32 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { EmergenciesService } from './emergencies.service';
 import { UpdateEmergencyDto } from './dto/update-emergency.dto';
+import { CreateEmergencyDto } from './dto/create-emergency.dto';
 
 @Controller('emergencies')
 export class EmergenciesController {
   constructor(private readonly emergenciesService: EmergenciesService) {}
 
   @Post()
-  create() {
-    return this.emergenciesService.create();
+  create(@Body() createEmergencyDto: CreateEmergencyDto) {
+    return this.emergenciesService.create(createEmergencyDto);
+  }
+
+  @Put(':id')
+  updateEmergency(
+    @Param('id') id: string,
+    @Body() updateEmergencyDto: UpdateEmergencyDto,
+  ) {
+    return this.emergenciesService.updateEmergency(id, updateEmergencyDto);
   }
 
   @Get('/emergencies-by-address')
@@ -34,25 +43,12 @@ export class EmergenciesController {
   }
 
   @Get()
-  findAll() {
-    return this.emergenciesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.emergenciesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateEmergencyDto: UpdateEmergencyDto,
-  ) {
-    return this.emergenciesService.update(+id, updateEmergencyDto);
+  findAll(@Query('admin') admin: boolean, @Query('clientId') clientId: string) {
+    return this.emergenciesService.findAll(admin, clientId);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.emergenciesService.remove(+id);
+    return this.emergenciesService.remove(id);
   }
 }

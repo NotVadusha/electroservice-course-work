@@ -18,6 +18,16 @@ export class ClientsService {
     return user[0];
   }
 
+  async updateUser(id: string, firstName: string, lastName: string) {
+    const query = `
+      UPDATE clients
+      SET first_name = $1, last_name = $2
+      WHERE id = $3
+    `;
+
+    await this.connection.query(query, [firstName, lastName, id]);
+  }
+
   async confirmCounterIndicators(id: string) {
     const query = `
       UPDATE counter_indicators
@@ -95,6 +105,15 @@ export class ClientsService {
       `
       SELECT * FROM clients
       `,
+    );
+  }
+
+  async findOne(id: string) {
+    return await this.connection.query(
+      `
+      SELECT * FROM clients WHERE id = $1
+      `,
+      [id],
     );
   }
 }

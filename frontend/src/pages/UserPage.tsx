@@ -6,9 +6,11 @@ import {
   FormLabel,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import localhostInstance from "../httpService";
 
 const UserPage: React.FC = () => {
   const [firstName, setFirstName] = useState("");
@@ -16,6 +18,29 @@ const UserPage: React.FC = () => {
   const [dateOfBirth, setDateOfBirth] = useState("");
 
   const navigate = useNavigate();
+
+  const { data: user, refetch } = useQuery({
+    queryKey: ["user"],
+    queryFn: () =>
+      localhostInstance.get(`/clients/${localStorage.getItem("clientId")}`),
+  });
+
+  const { mutate: updateUser } = useMutation({
+    mutationFn: (newUser: Record<string, string>) =>
+      localhostInstance.put(`/clients/${localStorage.getItem("clientId")}`, {
+        ...newUser,
+      }),
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.data[0].first_name);
+      setLastName(user.data[0].last_name);
+    }
+  }, [user]);
 
   const handleFirstNameChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -45,7 +70,7 @@ const UserPage: React.FC = () => {
           <Avatar
             sx={{ bgcolor: "blue", margin: "4rem 0", width: 128, height: 128 }}
           >
-            U
+            {localStorage.getItem("userMail")?.charAt(0)}
           </Avatar>
         </Box>
         <form onSubmit={handleSubmit}>
@@ -56,7 +81,7 @@ const UserPage: React.FC = () => {
             alignItems={"center"}
           >
             <Box display={"flex"} flexDirection={"column"}>
-              <FormLabel id="firstName-label">First Name:</FormLabel>
+              <FormLabel id="firstName-label">Ім'я</FormLabel>
               <TextField
                 label-id="firstName-label"
                 type="text"
@@ -66,7 +91,7 @@ const UserPage: React.FC = () => {
               />
             </Box>
             <Box display={"flex"} flexDirection={"column"}>
-              <FormLabel id="lastName-label">Last Name:</FormLabel>
+              <FormLabel id="lastName-label">Прізвище</FormLabel>
               <TextField
                 label-id="lastName-label"
                 type="text"
@@ -76,7 +101,7 @@ const UserPage: React.FC = () => {
               />
             </Box>
             <Box display={"flex"} flexDirection={"column"}>
-              <FormLabel id="dateOfBirth-label">Date of Birth:</FormLabel>
+              <FormLabel id="dateOfBirth-label">Дата народження</FormLabel>
               <TextField
                 label-id="dateOfBirth-label"
                 type="date"
@@ -85,7 +110,14 @@ const UserPage: React.FC = () => {
                 onChange={handleDateOfBirthChange}
               />
             </Box>
-            <Button type="submit">Save</Button>
+            <Button
+              type="submit"
+              onClick={() => {
+                updateUser({ firstName, lastName });
+              }}
+            >
+              Зберегти
+            </Button>
             <Button
               variant="contained"
               color="error"
@@ -96,7 +128,7 @@ const UserPage: React.FC = () => {
                 navigate("/login");
               }}
             >
-              Log out
+              Вийти
             </Button>
           </Box>
         </form>

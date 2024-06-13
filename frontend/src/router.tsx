@@ -9,6 +9,7 @@ import AddCounterNumbersPage from "./pages/AddCounterNumbersPage";
 import AdminPanel from "./pages/AdminPanelPage";
 import AdminDashboardsPage from "./pages/AdminDashboardsPage";
 import ConfirmIndicatorsPage from "./pages/ConfirmIndicatorsPage";
+import EmergencyPage from "./pages/CreateEmergencyPage";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute = () => {
@@ -29,11 +30,11 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <AdminPanel /> },
           {
-            path: "/admin/dashboard",
+            path: "dashboard",
             element: <AdminDashboardsPage />,
           },
           {
-            path: "/admin/confirm",
+            path: "confirm",
             element: <ConfirmIndicatorsPage />,
           },
         ],
@@ -51,7 +52,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: "create",
-                element: <div>create emergency</div>,
+                element: <EmergencyPage />,
               },
             ],
           },

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, Put } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 
 export interface CounterIndicator {
@@ -40,8 +40,22 @@ export class ClientsController {
     return this.clientsService.getIndicators();
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.clientsService.findOne(id);
+  }
+
   @Get()
   findAll() {
     return this.clientsService.findAll();
+  }
+
+  @Put(':id')
+  updateUser(
+    @Param('id') id: string,
+    @Body('firstName') firstName: string,
+    @Body('lastName') lastName: string,
+  ) {
+    return this.clientsService.updateUser(id, firstName, lastName);
   }
 }

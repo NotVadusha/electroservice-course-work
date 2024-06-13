@@ -24,6 +24,9 @@ export class Clients {
   @Column()
   last_name: string;
 
+  @Column({ nullable: true })
+  role: string;
+
   @Column({ unique: true })
   email: string;
 

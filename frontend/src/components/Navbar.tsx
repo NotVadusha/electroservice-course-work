@@ -36,7 +36,13 @@ const Navbar = () => {
         </Box>
         <Box sx={{ marginLeft: "auto", display: "flex", alignItems: "center" }}>
           <Link href="/user">
-            <Avatar />
+            <Avatar
+              sx={{
+                bgcolor: "blue",
+              }}
+            >
+              {localStorage.getItem("userMail")?.charAt(0)}
+            </Avatar>
           </Link>
         </Box>
       </Toolbar>
