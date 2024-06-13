@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Box,
@@ -18,57 +18,56 @@ import {
   FormControl,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
+import AdminNavbar from "../components/AdminNavbar";
+import localhostInstance from "../httpService"; // Axios instance
 
-const initialClients = [
-  {
-    id: 1,
-    name: "John Doe",
-    street: "Main St",
-    emergencyCount: 5,
-    tariffId: 1,
-    lastEmergency: "2024-06-01",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    street: "High St",
-    emergencyCount: 2,
-    tariffId: 2,
-    lastEmergency: "2024-06-01",
-  },
-  {
-    id: 3,
-    name: "Alice Johnson",
-    street: "Low St",
-    emergencyCount: 3,
-    tariffId: 1,
-    lastEmergency: "2024-06-01",
-  },
-];
+interface Client {
+  id: number;
+  email: string;
+  street: string;
+  emergencyCount: number;
+  lastEmergency: string;
+  tariffId: number;
+}
 
-const initialTariffs = [
-  { id: 1, name: "Standard", rate: 10 },
-  { id: 2, name: "Premium", rate: 20 },
-  { id: 3, name: "Basic", rate: 5 },
-];
+interface Tariff {
+  id: number;
+  name: string;
+}
 
-const initialContracts = [
-  { id: 1, clientId: 1, tariffId: 1 },
-  { id: 2, clientId: 2, tariffId: 2 },
-  { id: 3, clientId: 3, tariffId: 3 },
-  { id: 4, clientId: 1, tariffId: 2 },
-  { id: 5, clientId: 1, tariffId: 1 },
-];
+interface Contract {
+  id: number;
+  clientId: number;
+  tariffId: number;
+}
 
 const AdminPanel: React.FC = () => {
-  const [clients, setClients] = useState(initialClients);
-  const [tariffs, setTariffs] = useState(initialTariffs);
-  const [contracts, setContracts] = useState(initialContracts);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [tariffs, setTariffs] = useState<Tariff[]>([]);
+  const [contracts, setContracts] = useState<Contract[]>([]);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState("emergencyCount");
   const [filterName, setFilterName] = useState("");
   const [filterTariff, setFilterTariff] = useState<number | "">("");
   const [filterPeriod, setFilterPeriod] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [clientsRes, tariffsRes, contractsRes] = await Promise.all([
+        localhostInstance.get("/clients"),
+        localhostInstance.get(
+          `/contracts/get-tariffs/${localStorage.getItem("clientId")}`,
+        ),
+        localhostInstance.get("/contracts"),
+      ]);
+
+      setClients(clientsRes.data);
+      setTariffs(tariffsRes.data);
+      setContracts(contractsRes.data);
+    };
+
+    fetchData();
+  }, []);
 
   const handleSortRequest = (property: string) => {
     const isAsc = orderBy === property && order === "asc";
@@ -78,7 +77,11 @@ const AdminPanel: React.FC = () => {
 
   const handleFilterChange = (
     event: React.ChangeEvent<
-      HTMLInputElement | { name?: string; value: unknown }
+      | HTMLInputElement
+      | {
+          name?: string;
+          value: unknown;
+        }
     >,
   ) => {
     const { name, value } = event.target;
@@ -94,7 +97,7 @@ const AdminPanel: React.FC = () => {
   const filteredClients = clients
     .filter(
       (client) =>
-        client.name.toLowerCase().includes(filterName.toLowerCase()) &&
+        client.email.toLowerCase().includes(filterName.toLowerCase()) &&
         (filterTariff === "" || client.tariffId === filterTariff),
     )
     .filter((client) => {
@@ -141,14 +144,15 @@ const AdminPanel: React.FC = () => {
   return (
     <div>
       <Navbar />
+      <AdminNavbar />
       <Container>
         <Box py={2}>
           <Typography component={"h2"} variant="h4" fontWeight={600}>
-            Search Clients
+            Пошук клієнтів
           </Typography>
           <Box display="flex" justifyContent="space-between" mb={2}>
             <TextField
-              label="Filter by Name"
+              label="Пошук за ім'ям"
               name="name"
               value={filterName}
               onChange={handleFilterChange}
@@ -156,7 +160,7 @@ const AdminPanel: React.FC = () => {
               margin="normal"
             />
             <FormControl variant="outlined" margin="normal">
-              <InputLabel id="tariff-label">Tariff</InputLabel>
+              <InputLabel id="tariff-label">Тариф</InputLabel>
               <Select
                 labelId="tariff-label"
                 name="tariff"
@@ -175,7 +179,7 @@ const AdminPanel: React.FC = () => {
               </Select>
             </FormControl>
             <TextField
-              label="Period (days)"
+              label="Період (днів)"
               name="period"
               type="number"
               value={filterPeriod}
@@ -188,15 +192,15 @@ const AdminPanel: React.FC = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Street</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Вулиця</TableCell>
                   <TableCell>
                     <TableSortLabel
                       active={orderBy === "emergencyCount"}
                       direction={order}
                       onClick={() => handleSortRequest("emergencyCount")}
                     >
-                      Emergency Situations
+                      Аварії
                     </TableSortLabel>
                   </TableCell>
                 </TableRow>
@@ -204,7 +208,7 @@ const AdminPanel: React.FC = () => {
               <TableBody>
                 {sortedClients.map((client) => (
                   <TableRow key={client.id}>
-                    <TableCell>{client.name}</TableCell>
+                    <TableCell>{client.email}</TableCell>
                     <TableCell>{client.street}</TableCell>
                     <TableCell>{client.emergencyCount}</TableCell>
                   </TableRow>
@@ -214,21 +218,21 @@ const AdminPanel: React.FC = () => {
           </TableContainer>
 
           <Typography component={"h2"} variant="h4" fontWeight={600} py={2}>
-            Contracts by Number of Contracts
+            Кількість клієнтів за кількістю контрактів
           </Typography>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Street</TableCell>
+                  <TableCell>Ім'я</TableCell>
+                  <TableCell>Вулиця</TableCell>
                   <TableCell>
                     <TableSortLabel
                       active={orderBy === "contractCount"}
                       direction={order}
                       onClick={() => handleSortRequest("contractCount")}
                     >
-                      Number of Contracts
+                      Кількість контрактів
                     </TableSortLabel>
                   </TableCell>
                 </TableRow>
@@ -236,7 +240,7 @@ const AdminPanel: React.FC = () => {
               <TableBody>
                 {sortedClientContractCounts.map((client) => (
                   <TableRow key={client.id}>
-                    <TableCell>{client.name}</TableCell>
+                    <TableCell>{client.email}</TableCell>
                     <TableCell>{client.street}</TableCell>
                     <TableCell>{client.contractCount}</TableCell>
                   </TableRow>
@@ -246,15 +250,15 @@ const AdminPanel: React.FC = () => {
           </TableContainer>
 
           <Typography component={"h2"} variant="h4" fontWeight={600} py={2}>
-            Clients with the Most Contracts for a Particular Rate
+            Клієнти з найбільшою кількістю контрактів за певним тарифом
           </Typography>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Tariff</TableCell>
-                  <TableCell>Client Name</TableCell>
-                  <TableCell>Number of Contracts</TableCell>
+                  <TableCell>Тариф</TableCell>
+                  <TableCell>Ім'я клієнта</TableCell>
+                  <TableCell>Кількість контрактів</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -284,7 +288,7 @@ const AdminPanel: React.FC = () => {
                     .map((client) => (
                       <TableRow key={`${tariff.id}-${client.id}`}>
                         <TableCell>{tariff.name}</TableCell>
-                        <TableCell>{client.name}</TableCell>
+                        <TableCell>{client.email}</TableCell>
                         <TableCell>
                           {
                             contracts.filter(
@@ -300,23 +304,22 @@ const AdminPanel: React.FC = () => {
               </TableBody>
             </Table>
           </TableContainer>
-
           <Typography component={"h2"} variant="h4" fontWeight={600} py={2}>
-            Customers with No Emergencies Recently
+            Замовники в котрих не було вимкнень нещодавно
           </Typography>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Street</TableCell>
-                  <TableCell>Emergency Situations</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Вулиця</TableCell>
+                  <TableCell>Аварії</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {clientsWithNoEmergencies.map((client) => (
                   <TableRow key={client.id}>
-                    <TableCell>{client.name}</TableCell>
+                    <TableCell>{client.email}</TableCell>
                     <TableCell>{client.street}</TableCell>
                     <TableCell>{client.emergencyCount}</TableCell>
                   </TableRow>
@@ -326,22 +329,29 @@ const AdminPanel: React.FC = () => {
           </TableContainer>
 
           <Typography component={"h2"} variant="h4" fontWeight={600} py={2}>
-            Customer with the Highest Number of Outages
+            Клієнт з найбільшою кількістю вимкнень
           </Typography>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Street</TableCell>
-                  <TableCell>Emergency Situations</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Вулиця</TableCell>
+                  <TableCell>Аварії</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell>{clientWithMostOutages.name}</TableCell>
-                  <TableCell>{clientWithMostOutages.street}</TableCell>
-                  <TableCell>{clientWithMostOutages.emergencyCount}</TableCell>
+                  {clientWithMostOutages && (
+                    <>
+                      {" "}
+                      <TableCell>{clientWithMostOutages.email}</TableCell>
+                      <TableCell>{clientWithMostOutages.street}</TableCell>
+                      <TableCell>
+                        {clientWithMostOutages.emergencyCount}
+                      </TableCell>
+                    </>
+                  )}
                 </TableRow>
               </TableBody>
             </Table>

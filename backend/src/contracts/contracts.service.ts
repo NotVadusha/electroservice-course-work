@@ -52,4 +52,24 @@ export class ContractsService {
       };
     });
   }
+
+  async findAll() {
+    const query = `
+      SELECT c.id, c.description, c.created_at, c.client_id, c.tariff_id, cl.first_name, cl.last_name, t.name as tariff_name, t.price as tariff_price
+      FROM contracts c
+      JOIN clients cl ON c.client_id = cl.id
+      JOIN tariffs t ON c.tariff_id = t.id
+    `;
+    return await this.connection.query(query);
+  }
+
+  async findNewClients() {
+    const query = `
+      SELECT DATE(created_at) AS date, COUNT(id) AS count
+      FROM clients
+      GROUP BY DATE(created_at)
+      ORDER BY DATE(created_at)
+    `;
+    return await this.connection.query(query);
+  }
 }

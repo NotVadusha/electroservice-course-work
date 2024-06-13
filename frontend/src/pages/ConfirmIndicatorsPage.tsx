@@ -13,6 +13,7 @@ import {
 import Navbar from "../components/Navbar";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import localhostInstance from "../httpService";
+import AdminNavbar from "../components/AdminNavbar";
 
 interface CounterIndicator {
   indicator_id: string;
@@ -52,6 +53,7 @@ const ConfirmIndicatorsPage = () => {
   return (
     <div>
       <Navbar />
+      <AdminNavbar />
       <Container>
         <Typography variant={"h4"} textAlign={"center"} p={4}>
           Підтвердження показників лічильників

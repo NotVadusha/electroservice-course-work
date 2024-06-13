@@ -17,4 +17,14 @@ export class ContractsController {
   async getTarriffs(@Param('userId') userId: string) {
     return await this.contractsService.getTariffs(userId);
   }
+
+  @Get('')
+  async findAll() {
+    return await this.contractsService.findAll();
+  }
+
+  @Get('new-clients')
+  findNewClients() {
+    return this.contractsService.findNewClients();
+  }
 }

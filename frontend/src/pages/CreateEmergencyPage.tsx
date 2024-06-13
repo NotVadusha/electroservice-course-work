@@ -20,6 +20,7 @@ import {
 import { useQuery, useMutation } from "@tanstack/react-query";
 import localhostInstance from "../httpService";
 import Navbar from "../components/Navbar";
+import AdminNavbar from "../components/AdminNavbar";
 
 interface Emergency {
   id: string;
@@ -108,6 +109,7 @@ const EmergencyPage = () => {
   return (
     <div>
       <Navbar />
+      {isUserAnAdmin && <AdminNavbar />}
       <Container>
         <Typography variant="h4" textAlign="center" p={4}>
           Керування скаргами

@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  ManyToMany,
   JoinColumn,
 } from 'typeorm';
 import { Clients } from 'src/clients/entities/client.entity';
@@ -15,23 +14,16 @@ export class Contracts {
   id: string;
 
   @Column()
-  client_id: string;
-
-  @Column()
   description: string;
 
-  @Column()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
-  @ManyToOne(() => Tariffs, (tariff) => tariff.contracts, {
-    createForeignKeyConstraints: false,
-  })
+  @ManyToOne(() => Clients)
+  @JoinColumn({ name: 'client_id' })
+  client: Clients;
+
+  @ManyToOne(() => Tariffs)
   @JoinColumn({ name: 'tariff_id' })
   tariff: Tariffs;
-
-  @ManyToMany(() => Clients, (client) => client.contracts, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  clients: Clients[];
 }

@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Contracts } from './contract.entity';
 
 @Entity('tariffs')
@@ -15,9 +21,7 @@ export class Tariffs {
   @Column()
   description: string;
 
-  @OneToMany(() => Contracts, (contract) => contract.tariff, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Contracts, (contract) => contract.tariff)
+  @JoinColumn({ name: 'tariff_id' })
   contracts: Contracts[];
 }

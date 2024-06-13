@@ -70,7 +70,7 @@ export class ClientsService {
 
   async getAllAddresses(): Promise<any> {
     const addresses = await this.connection.query(`
-      SELECT city, street, number
+      SELECT *
       FROM addresses
     `);
 
@@ -115,5 +115,15 @@ export class ClientsService {
       `,
       [id],
     );
+  }
+
+  async findNewClients(): Promise<any[]> {
+    const query = `
+      SELECT DATE(created_at) AS date, COUNT(id) AS count
+      FROM clients
+      GROUP BY DATE(created_at)
+      ORDER BY DATE(created_at)
+    `;
+    return await this.connection.query(query);
   }
 }

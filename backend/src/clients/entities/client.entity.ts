@@ -33,14 +33,17 @@ export class Clients {
   @Column()
   password: string;
 
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
+
   @OneToOne(() => Addresses, (address) => address.client)
-  @JoinColumn()
+  @JoinColumn({ name: 'address_id' })
   address: Addresses;
 
   @Column()
   phone_integer: string;
 
-  @ManyToMany(() => Contracts, (contract) => contract.clients)
+  @ManyToMany(() => Contracts, (contract) => contract.client)
   @JoinTable({
     name: 'clients_contracts',
     joinColumn: { name: 'client_id', referencedColumnName: 'id' },
